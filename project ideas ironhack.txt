@@ -1,0 +1,42 @@
+
+🎯 OPTION 2 — Russian Roulette Game
+🧠 Concept
+
+A luck-based survival game:
+
+
+Press shoot self or opponent
+
+Survive or lose
+
+Core Features 
+4 or 6 chambers
+random live bullets
+random blank bullets
+Shoot Self button
+Shoot Opponent button
+If dead = Game over + restart
+If survive = move to next round (round counter like score) //
+
+
+Organizing ideas:
+
+create 3 files:
+	- gun
+	- user
+	- opponent
+
+Opponent: 
+-basic if conditionals (if 0 shoot, if 1 shoot-self)
+- 2 lives; 
+
+User: 
+- 2 buttons, shoot self and shoot opponent
+- 2 lives;
+
+Gun: 
+ - display an array with the bullets inside (either blank or live round);
+ - at the start round show to user the number of live rounds and blank rounds
+ - randomize them after. 
+ 
+

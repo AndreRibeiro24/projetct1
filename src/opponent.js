@@ -1,0 +1,1 @@
+let opponentLives = 2; 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <title>Roullete</title>
+  </head>
+  <body>
+    <main>
+        <!--Start Screen display:flex/box by default-->
+        <div id="start-screen" class="screen">
+            <img src="" alt="logo" class="logo-img">
+            <br>
+            <button id="start-button">Start Game</button>
+            <p>Ready to gamble your life?</p>
+        </div>
+        <!--Game Screen display:none by default-->
+
+            <div id="game-screen" class="screen">
+                <h2>Game Stats</h2>
+                <p>Rounds: <span id='round-score'>0</span></p>
+                <p>Lives: <span id='lives-score'>0</span></p>
+                <button id="shoot-self">Shoot Self</button>
+                <button id="shoot-opponent">Shoot Opponent</button>
+            </div>
+        <!--Game End Screen, with Restart Game option, display:none by default-->
+        <div id="game-end" class="screen">
+            <img src="" alt ="logo" class="logo-img">
+            <h1>Game Over</h1>
+            <br>
+            <p>No more remaining lives</p>
+            <br>
+            <p>Dare gambling your life again?</p><br>
+            <button id ='restart-button'>Restart</button>
+        </div>
+    </main> 
+    <!-- JS files linking-->
+     <script type="text/javascript" src="src/game.js"></script>
+     <script type="text/javascript" src="src/gun.js"></script>
+     <script type="text/javascript" src="src/opponent.js"></script>
+     <script type="text/javascript" src="src/player.js"></script>
+  </body>
