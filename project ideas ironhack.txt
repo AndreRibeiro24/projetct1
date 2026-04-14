@@ -40,3 +40,17 @@ Gun:
  - randomize them after. 
  
 
+// Day 0 // 
+
+- Organized basic HTML
+- Divided js files into what I'll need to build the game 
+- Build classes fundamental properties. 
+- Build button to switch from main page to game page. 
+
+//Day 1 // 
+
+- build game.start function on game.js 
+- build nextTurn function to switch turns from player to opponent
+
+
+
