@@ -10,14 +10,26 @@ class Game{
         this.opponentLives = document.querySelector("#opponent-score")
         //Game state
         this.player = null
-        this.score = 0
+        this.score = 1
         this.lives = 0
         this.gameIsOver = false
         this.gameIntervalId = null
         //layout dimensions
         this.height = 600
         this.width = 500
+        this.gun = new Gun (6,0)
     }
+
+
+                            /*                                         METHODS                                     */
+
+
+
+
+                            /*                                         Game Core                                   */
+
+
+
      /*                          Switches from Main page to game page                */
     start(){
         this.gameScreen.style.height = this.height + 'px'
@@ -26,7 +38,10 @@ class Game{
         this.gameScreen.style.display = 'block'
         this.player = new Player('Name', 3 , 0, true)
         this.opponent = new Opponent('Name', 3, true)
-        this.gun = new Gun ()
+        
+        this.gun.chambers = 6;
+        this.gun.liveRounds = Math.floor(Math.random() * 4) + 1;
+        
 
 
         this.currentTurn = 'player'
@@ -37,7 +52,21 @@ class Game{
         
     
     }
+    /*                      Loops and clears intervals of the game                */
+    gameLoop(){
+        this.update()
+        if (this.gameIsOver){
+            clearInterval(this.gameIntervalId)
+        }
+    }
 
+
+
+                            /*                                         Game interface                               */
+
+
+
+                                                        
     /*                          Stats Updating Function                         */
     updateStats(){
         this.scoreBoard.textContent = this.score
@@ -50,14 +79,31 @@ class Game{
         const shootOppButton = document.querySelector('#shoot-opponent')
 
         if (enable){
-            selfShootButton.disable = false //buttons are available for user
-            shootOppButton.disable = false //buttons are available for user
+            selfShootButton.disabled = false //buttons are available for user
+            shootOppButton.disabled = false //buttons are available for user
         }else{
-            selfShootButton.disable = true //buttons are locked for user
-            shootOppButton.disable = true //buttons are locked for user            
+            selfShootButton.disabled = true //buttons are locked for user
+            shootOppButton.disabled = true //buttons are locked for user            
         }
      }
-     /*                      Picks turn between player and NPC                  */
+
+    /*                      Transitions to endScreen if player looses             */
+    endGameScreen(){
+        this.endScreen.style.height = this.height + 'px'
+        this.endScreen.style.width = this.width + 'px'
+        this.gameScreen.style.display = 'none'
+        this.endScreen.style.display = 'block'
+    }
+
+
+    
+
+                            /*                                         Game flow                                     */
+    
+    
+    
+    
+    /*                      Picks turn between player and NPC                  */
     nextTurn(){
         if(this.gameIsOver){return        }
         if(this.currentTurn === 'player'){
@@ -67,48 +113,169 @@ class Game{
         }else{
             console.log('Opponents Turn')
             this.enableControls(false)
+            setTimeout(() => this.opponentShoot(), 1200)
         }
-        // setTimeout(() => {           // To read later, this simulates AI thinking
-        //     this.gameShoot();
-        // }, 1500); 
-        
+
     }
-    /*                      Loops and clears intervals of the game                */
-    gameLoop(){
-        this.update()
-        if (this.gameIsOver){
-            clearInterval(this.gameIntervalId)
+    /*                      Controls Round Reset for Next Round                   */
+    resetRound(){
+        this.score++
+
+        this.player.lives = 3
+        this.opponent.lives = 3
+
+        this.gun.chambers = 6
+        this.gun.liveRounds = Math.floor(Math.random() * (this.gun.chambers - 1)) + 1;
+        this.gun.load();
+        this.gun.shuffle()
+        this.updateStats();
+
+        this.currentTurn = `player`;
+        this.nextTurn();
+    }
+    /*                     Checks if game is over                                   */
+    checkGameOver(){
+        if(this.player.lives <= 0 ){
+            this.gameIsOver = true
+            this.endGameScreen();
         }
     }
-    /*                      Game logic on shooting the gun                        */
-    gameShoot(){
-        const isLive = this.gun.shoot();
-        // checks if bullet is live round, if it is decreases 1 health point
-        if (isLive){
-            if(this.currentTurn === 'player'){
-                this.player.lives--;
+
+                            /*                                         Game actions                                    */
+
+    /*                     Controls Player Turn                                   */
+    playerShoot(targetSelf){
+        this.enableControls(false)
+        const isLive = this.gun.shoot()
+
+        //check if the chamber is empty
+        if(isLive === null){
+            console.log(`Chamber is empty, let's move to the next round.`)
+            this.resetRound()
+            return
+        }
+
+        if(isLive){
+            //logic that keeps player turn if he shoots himself with a blank round
+            if(targetSelf){
+                this.player.lives--
             }else{
-                this.opponent.lives--;
+                this.opponent.lives--
+            }
+        }
+        
+        this.updateStats()
+        this.checkGameOver()
+
+        if(!this.gameIsOver){
+             if (this.opponent.lives <= 0) {
+                console.log("Oponente derrotado! Iniciando nova ronda...");
+                setTimeout(() => this.resetRound(), 1000);
+                return; 
+            }
+            if(this.gun.slots.length === 0){
+                console.log('Out of bullets. Next Round')
+                this.resetRound();
+                return;
+            }
+            if(targetSelf && !isLive){
+                console.log("Blank! Player Keeps Turn")
+                this.currentTurn = 'player';
+
+            }else{
+                this.currentTurn = `opponent`;
 
             }
-            this.updateStats
-        }
-        //Game Over Verification
-        if(this.player.lives <= 0 || this.opponent.lives <= 0){
-            this.endGame() // still need to build this function!
-            return;
-        }  
-        //Round Over Verification
-        if(this.gun.slots.length === 0){
-            console.log("Round is Over! Prepare yourself for next round...")
-            this.resetRound() // still need to build this function!
-        }
-    }
-    
-}
-const game = new Game();
 
+            this.nextTurn();
+
+        }
+
+    }
+
+
+    opponentShoot(){
+        /* AI calculates bullets*/
+        const total = this.gun.slots.length;
+        const livesCount = this.gun.slots.filter(bullet => bullet===true).length
+        const blanksCount = total - livesCount
+
+        let targetSelf = false;
+
+
+        if (livesCount > blanksCount){
+            targetSelf = false;
+
+        }else if(blanksCount > livesCount){
+            targetSelf = true;
+
+        }else{
+            targetSelf = Math.random() > 0.5;
+        }
+
+        /*After Calculating and deciding it shoots*/
+
+        const isLive = this.gun.shoot();
+        if(isLive === null){
+            this.resetRound();
+            return
+        }
+
+        if(isLive===true){
+            if(targetSelf===true){
+                this.opponent.lives--;
+
+            }else{
+                this.player.lives--
+            }
+        }
+        /* stats update and checking if gameover */
+
+        this.updateStats();
+        this.checkGameOver(); //verifies if player died!
+
+        /* lets check if game is over by any other reason */ 
+
+        if(!this.gameIsOver){ //remember gameIsOver by default is false
+
+            //checks if opponent is dead
+            if(this.opponent.lives <= 0){
+                console.log(`Opponent was killed! Prepare for next round... `)
+                setTimeout(()=>this.resetRound(), 1000);
+                return;
+            }
+            //checks if chamber is out of bullets
+            if(this.gun.slots.length === 0){
+                setTimeout(()=>this.resetRound(), 1000);
+                return;
+            }
+
+            //keeping turn for opponent
+            if(targetSelf && !isLive){
+                console.log('Blank! Opponent keeps its turn!')
+
+            }else{
+                this.currentTurn = 'player';
+            }
+            this.nextTurn();
+        }
+
+    }
+}
+const game = new Game(6,0);
+
+
+                                                /*                                          EVENT LISTENERS                                      */
+    /*                      Start Button                                           */
 document.querySelector("#start-button").addEventListener("click", () => {
     game.start();
+});
+    /*                      Shoot Self Button                                      */
+document.querySelector('#shoot-self').addEventListener('click', ()=>{
+    game.playerShoot(true); 
+});
+    /*                      Shoot Opponent Button                                  */
+document.querySelector('#shoot-opponent').addEventListener('click', ()=>{
+    game.playerShoot(false); 
 });
 

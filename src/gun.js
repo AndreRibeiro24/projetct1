@@ -1,11 +1,9 @@
 class Gun{
-    constructor(chambers, liveRounds){
-        this.chambers = chambers
+    constructor(chambers,liveRounds){
+        this.chambers = chambers || 6
         this.liveRounds = liveRounds
         this.slots = []
-        this.load()
-        this.shuffle()
-       
+     
         
     }
 
@@ -39,7 +37,10 @@ class Gun{
             }else{
                 console.log('click')
             }
+            return isLive
+
         }
+        return null
 
 
     }

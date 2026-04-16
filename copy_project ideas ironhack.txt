@@ -63,3 +63,23 @@ To do from Day 1:
 - Work on Opponent NPC logic
 
 
+NPC logic{
+
+
+- knows the total of rounds in chamber, because rounds are displayed on the start of each round (doesnt if they are blank or live rounds)
+- if there are more remaining blank rounds than live rounds - > shoots self
+- if there are more remaining live rounds than blank -> shoots player
+- if its a 50/50 sitatuion, shoots self (would be cool to make it random on this decision)
+
+Feedback = the game is 'running' in the background. The gun is shuffling, loading at the start of the game and each round. 
+
+What to do next:
+- At the start of each round, display the total amount of live rounds in the chamber before shuffling.
+- build restart method, to restart game 
+- think about either starting the desing of the game, or adding features like (healing items, double damage)
+
+
+//day 3 
+
+
+
