@@ -8,34 +8,93 @@
   </head>
   <body>
     <main>
+        
+
         <!--Start Screen display:flex/box by default-->
         <div id="start-screen" class="screen">
-            <img src="" alt="logo" class="logo-img">
+            <img src="./media/images/skeleton1.jpg" alt="logo" class="logo-img">
             <br>
             <button id="start-button">Start Game</button>
             <p>Ready to gamble your life?</p>
         </div>
         <!--Game Screen display:none by default-->
 
-            <div id="game-screen" class="screen">
-                <h2>Game Stats</h2>
-                <p>Round: <span id='round-score'>0</span></p>
-                <p>Your Lives: <span id='lives-score'> 0 </span></p>
-                <p>Opponent Lives: <span id='opponent-score'> 0 </span></p>
-                <button id="shoot-self"> Shoot Self </button>
-                <button id="shoot-opponent"> Shoot Opponent </button>
-            </div>
+<div id="game-screen" class="screen">
+
+  <!-- top bar -->
+  <div class="gs-topbar">
+    <div class="gs-round">Round <span id="round-score">1</span></div>
+  </div>
+
+  <!-- arena -->
+  <div class="gs-arena">
+
+    <!-- player  -->
+    <div class="gs-char">
+      <div class="gs-char-name">You</div>
+      <img id="player-portrait" src="./media/images/player_full_hp.jpg" alt="player" class="gs-portrait">
+      <div class="gs-hearts" id="player-hearts">
+        <div class="gs-heart"></div>
+        <div class="gs-heart"></div>
+        <div class="gs-heart"></div>
+      </div>
+    </div>
+
+    <!-- center: gun + shells -->
+    <div class="gs-center">
+      <img id='shotgun-portrait' src="./media/images/shotgun.jpg" alt="shotgun" class="gs-gun-img">
+      <div class="gs-shells" id="shells-display"></div>
+      <div class="gs-shell-label" id="shell-label"></div>
+    </div>
+
+    <!-- opponent  -->
+    <div class="gs-char">
+      <div class="gs-char-name">Opponent</div>
+      <img id="opponent-portrait" src="./media/images/skeleton_full_hp.jpg" alt="opponent" class="gs-portrait">
+      <div class="gs-hearts" id="opponent-hearts">
+        <div class="gs-heart"></div>
+        <div class="gs-heart"></div>
+        <div class="gs-heart"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- bottom stats + buttons -->
+  <div class="gs-bottom">
+    <div class="gs-stats">
+      <div class="gs-stat">Chambers <span id="chambers-score">6</span></div>
+      <!-- <div class="gs-stat">Live <span id="liveRounds-score" class="amber">0</span></div> -->
+      <div class="gs-stat">Your Lives <span id="lives-score" class="green">3</span></div>
+      <!-- <div class="gs-stat">Blank <span id="blankRounds-score">0</span></div> -->
+      <div class="gs-stat">Opp. Lives <span id="opponent-score" class="red">3</span></div>
+    </div>
+    <div class="action-buttons">
+      <button id="shoot-self">Shoot Self</button>
+      <button id="shoot-opponent">Shoot Opponent</button>
+    </div>
+  </div>
+
+</div>
         <!--Game End Screen, with Restart Game option, display:none by default-->
         <div id="game-end" class="screen">
             <img src="" alt ="logo" class="logo-img">
             <h1>Game Over</h1>
-            <br>
             <p>No more remaining lives</p>
-            <br>
-            <p>Dare gambling your life again?</p><br>
+            <p>You survived: <span id="scoreRecord">0</span></p>
+            <p>Dare gambling your life again?</p>
             <button id ='restart-button'>Restart</button>
         </div>
     </main> 
+    <!--game ost-->
+        <audio id="bg-music" src="./media/audio/mainost.mp3" loop></audio>
+        <script>
+                const music = document.getElementById('bg-music');
+                music.volume = 0.08;
+                document.getElementById('start-button').addEventListener('click', () => {
+                    music.play();
+                });
+        </script>
     <!-- JS files linking-->
         <script type="text/javascript" src="src/gun.js"></script>
         <script type="text/javascript" src="src/opponent.js"></script>

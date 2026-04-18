@@ -73,13 +73,20 @@ NPC logic{
 
 Feedback = the game is 'running' in the background. The gun is shuffling, loading at the start of the game and each round. 
 
+//day 3 
 What to do next:
-- At the start of each round, display the total amount of live rounds in the chamber before shuffling.
-- build restart method, to restart game 
+- At the start of each round, display the total amount of live rounds in the chamber before shuffling.(check)
+- build restart method, to restart game (check)
 - think about either starting the desing of the game, or adding features like (healing items, double damage)
 
+Managed to do the tasks. Impleted CSS, and some animations. Will do more css on the freetime
+Time to work on the audios
+to do on free time, add live hearts to it and build the high score at the end
 
-//day 3 
+
+check flipping the shotgun smoother on the game
+
+
 
 
 
