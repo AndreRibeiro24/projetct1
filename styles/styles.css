@@ -418,7 +418,7 @@ button:disabled {
 }
 
 /* ── ANIMATIONS ────────────────────────────────────────── */
-@keyframes appear {
+/* @keyframes appear {
   from { opacity: 0; transform: scale(0.98); }
   to   { opacity: 1; transform: scale(1); }
 }
@@ -431,7 +431,7 @@ button:disabled {
   94%      { opacity: 1; }
   95%      { opacity: 0.6; }
   96%      { opacity: 1; }
-}
+} */
 
 /* ── SCROLLBAR ─────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
