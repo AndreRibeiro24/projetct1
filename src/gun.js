@@ -34,6 +34,7 @@ class Gun{
             const isLive = this.slots.shift()
             if (isLive === true){
                 console.log('bang')
+                
             }else{
                 console.log('click')
             }

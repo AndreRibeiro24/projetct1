@@ -101,9 +101,6 @@ class Game{
                                                         
     /*                          Stats Updating Function                         */
     updateStats(){
-        this.scoreBoard.textContent = this.score
-        this.playerLives.textContent = this.player.lives
-        this.opponentLives.textContent = this.opponent.lives
         this.updateHearts()
         this.updateShells()
         this.updatePortraits()
@@ -135,11 +132,11 @@ class Game{
     const playerHearts = document.getElementById('player-hearts')
     const opponentHearts = document.getElementById('opponent-hearts')
 
-    ;[...playerHearts.children].forEach((h, i) => {
-        h.classList.toggle('dead', i >= this.player.lives)
+    ;[...playerHearts.children].forEach((heart, index) => {
+        heart.classList.toggle('dead', index >= this.player.lives)
     })
-    ;[...opponentHearts.children].forEach((h, i) => {
-        h.classList.toggle('dead', i >= this.opponent.lives)
+    ;[...opponentHearts.children].forEach((heart, index) => {
+        heart.classList.toggle('dead', index >= this.opponent.lives)
     })
 }
     /*                      Update shells count of the shotgun             */
@@ -149,9 +146,17 @@ class Game{
     const live = this.gun.slots.filter(b => b === true).length
     const blank = this.gun.slots.length - live
 
-    container.innerHTML = this.gun.slots
-        .map(b => `<div class="gs-shell ${b ? 'live' : 'blank'}"></div>`)
-        .join('')
+    let shellsHTML = ''
+
+    for(let i = 0; i < this.gun.slots.length; i++){
+        if(this.gun.slots[i]){
+            shellsHTML += '<div class="gs-shell live"></div>'
+        } else {
+            shellsHTML += '<div class="gs-shell blank"></div>'
+        }
+    }
+
+    container.innerHTML = shellsHTML
 
     label.textContent = `${live} live / ${blank} blank`
 }
@@ -174,17 +179,42 @@ class Game{
             ]
 
          playerImg.src= playerSrc[this.player.lives - 1]
-         opponentImg.src = opponentSrc[this.opponent.lives - 1]   
+         opponentImg.src = opponentSrc[this.opponent.lives]   
     }
     /*                      Update shotgun when firing a live round           */
     flashGunBlast(){
         this.gunImg.src='./media/images/shotgun_blasting.jpg'
         setTimeout(() => {
             this.gunImg.src = './media/images/shotgun.jpg'
-        },1000)
+        },400)
     }
-    
+    /*                      Updates shotgun direction based on user action    */
+    shotgunDirection(targetSelf){
+        
+        //for player
+        if(this.currentTurn === 'player'){
+            if(targetSelf){
+            setTimeout(()=>{this.gunImg.style.transform = 'scaleX(-1)'},300)
+        }else{
+           setTimeout(()=>{this.gunImg.style.transform = 'scaleX(1)'},300);
+        }}
+        
+        //for oppponent
 
+        if(this.currentTurn === 'opponent'){
+            if(targetSelf){
+                setTimeout(()=> {this.gunImg.style.transform = 'scaleX(1)'},300)
+            }else{
+                setTimeout(()=>{this.gunImg.style.transform = 'scaleX(-1)'},300)
+            }
+        }
+    }
+    /*                      game log method                                   */
+    logMessage(msg,color = 'var(--text-muted)'){
+        const log = document.getElementById('log-text')
+        log.textContent = msg
+        log.style.color = color
+    }
                             /*                                         Game flow                                     */
     
     
@@ -192,17 +222,18 @@ class Game{
     
     /*                      Picks turn between player and NPC                  */
     nextTurn(){
-        if(this.gameIsOver){return        }
+        if(this.gameIsOver){return}
         if(this.currentTurn === 'player'){
             this.gunImg.style.transform = 'scaleX(1)'
-            console.log('Players Turn')
-            this.enableControls(true)
+            this.logMessage('— your turn. choose wisely —')
+            setTimeout(()=>{this.enableControls(true)},500)
+            
             
         }else{
             this.gunImg.style.transform = 'scaleX(-1)'
-            console.log('Opponents Turn')
+            this.logMessage("— opponent's turn —", 'var(--red)')
             this.enableControls(false)
-            setTimeout(() => this.opponentShoot(), 1200)
+            setTimeout(() => this.opponentShoot(), 1600)
         }
 
     }
@@ -222,7 +253,7 @@ class Game{
 
         this.currentTurn = `player`;
         this.nextTurn();
-        console.log(`Round ${this.score}, dare to bet your life on luck?`)
+        this.logMessage(`— round ${this.score}. Dare to bet your life? —`)
     }
     
     /*                      Adds a slight delay in between rounds                 */
@@ -246,51 +277,62 @@ class Game{
 
     /*                     Controls Player Turn                                   */
     playerShoot(targetSelf){
+        
         this.enableControls(false)
+
+        this.shotgunDirection(targetSelf)
+
         const isLive = this.gun.shoot()
+        if(isLive){
+        this.logMessage('— bang! —', 'var(--red)')
+        } else {
+        this.logMessage('— click. blank —')
+        }
 
         //check if the chamber is empty
         if(isLive === null){
-            console.log(`Chamber is empty, let's move to the next round.`)
+            this.logMessage(`- Empty chamber. Next Round -`)
             this.startNextRound()
             return
         }
-
+        setTimeout(()=>{
         if(isLive){
-            this.flashGunBlast()
+            setTimeout(()=>{this.flashGunBlast()},400)
             //added easter egg
             const explodingChance = 0.05
             if(Math.random() < explodingChance){
-                console.log("gun is jammed and exploded in player's face")
+                this.logMessage("- Gun was jammed and exploded in your face - ", 'var(--red)')
                 this.player.lives = 0
                 this.updateStats();
                 this.checkGameOver();
                 return
             }
-            //logic that keeps player turn if he shoots himself with a blank round
+        
             if(targetSelf){
                 this.player.lives--
+                this.logMessage('— bang. you took a hit —', 'var(--red)')
             }else{
                 this.opponent.lives--
+                this.logMessage('— bang. opponent took a hit —', 'var(--text)')
             }
         }
-        
+        setTimeout(()=>{
         this.updateStats()
         this.checkGameOver()
 
         if(!this.gameIsOver){
              if (this.opponent.lives <= 0) {
-                console.log("Opponent dead. Neww round starting...");
+                this.logMessage("- Opponent defeated. Next Round -", 'var(--text)');
                 setTimeout(() => this.startNextRound(), 1000);
                 return; 
             }
             if(this.gun.slots.length === 0){
-                console.log('Out of bullets. Next Round')
+                this.logMessage('- Out of Ammo. Next Round - ')
                 this.startNextRound();
                 return;
             }
             if(targetSelf && !isLive){
-                console.log("Blank! Player Keeps Turn")
+                this.logMessage("- Click! Blank Round. Your turn continues")
                 this.currentTurn = 'player';
 
             }else{
@@ -301,9 +343,9 @@ class Game{
             this.nextTurn();
 
         }
-
+        },900)
+    },500)
     }
-
 
     opponentShoot(){
         /* AI calculates bullets*/
@@ -325,19 +367,20 @@ class Game{
         }
 
         /*After Calculating and deciding it shoots*/
+        this.shotgunDirection(targetSelf)
 
         const isLive = this.gun.shoot();
         if(isLive === null){
             this.startNextRound();
             return
         }
-
+        setTimeout(()=>{
         if(isLive){
             this.flashGunBlast()
             //easter egg for opponent
             const explodingChance = 0.05
             if(Math.random() < explodingChance){
-                console.log("gun is jammed and exploded in opponent's face")
+                this.logMessage("— opponent's gun jammed! exploded in their face —", 'var(--text)')
                 this.opponent.lives = 0
                 this.updateStats();
                 this.checkGameOver();
@@ -346,13 +389,15 @@ class Game{
             }
             if(targetSelf){
                 this.opponent.lives--;
+                this.logMessage("— opponent shot themselves —", 'var(--text)')
 
             }else{
                 this.player.lives--
+                this.logMessage('— bang. you took a hit —', 'var(--red)')
             }
         }
         /* stats update and checking if gameover */
-
+        setTimeout(()=>{
         this.updateStats();
         this.checkGameOver(); //verifies if player died!
 
@@ -362,7 +407,7 @@ class Game{
 
             //checks if opponent is dead
             if(this.opponent.lives <= 0){
-                console.log(`Opponent was killed! Prepare for next round... `)
+                this.logMessage('— opponent defeated. next round —', 'var(--text)')
                 setTimeout(()=>this.startNextRound(), 1000);
                 return;
             }
@@ -374,7 +419,7 @@ class Game{
 
             //keeping turn for opponent
             if(targetSelf && !isLive){
-                console.log('Blank! Opponent keeps its turn!')
+                this.logMessage("— click. blank. opponent's turn continues —")
                 this.currentTurn = 'opponent'
 
             }else{
@@ -382,8 +427,9 @@ class Game{
             }
             this.nextTurn();
         }
-
-    }
+        },900)
+    },500)
+}
 }
 const game = new Game(6,0);
 

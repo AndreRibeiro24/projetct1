@@ -85,7 +85,25 @@ to do on free time, add live hearts to it and build the high score at the end
 
 
 check flipping the shotgun smoother on the game
+v
+(kmaybe add delay to the flipping, to give time for the blasting animation, and the damage animation to go through)
 
+
+gun's flipping is smoother, now figured there's an issue: - if opponent or player shoots themselves shotgun will "animate" like its towards its opponent. Need to fix
+v
+fix= thinking about maybe inputing some type of if that user/opponent is shooting himself gun won't rotate. Maybe create a new method, that will be called everytime in the nextTurn()
+
+new Method created, added some SetTimeout's to the playerShoot() and opponentShoot() to make gun turning and firing more 'smoother' 
+remove chambers your lives and opponent lives, and add a game-log for player to see 
+
+
+To do: 
+- fix opponent portraits, for some reason images are messed up with the health status.
+- add sounds, reloading(start of each round), click(when blank), bang sound (when live); 
+- build highscore result at the end;
+- highlight player name and opponent (to know whose turn it is) 
+
+after all this base game is done, can work on some extra features
 
 
 

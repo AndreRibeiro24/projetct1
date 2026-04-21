@@ -23,6 +23,11 @@
 
 /* ── BODY ──────────────────────────────────────────────── */
 body {
+  background-image:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+   url("../media/images/body-background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font-mono);
@@ -108,6 +113,7 @@ p {
 
 /* ── START SCREEN ──────────────────────────────────────── */
 #start-screen {
+
   padding: 2.5rem 2rem;
   gap: 2rem;
 }
@@ -257,7 +263,24 @@ button:disabled {
   font-size: 1.1rem;
   margin-left: 0.4rem;
 }
+#game-log {
+    width: 100%;
+    min-height: 50px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border);
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+}
 
+#log-text {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    text-align: left;
+}
 
 
 
@@ -326,7 +349,7 @@ button:disabled {
   object-fit: contain;
   image-rendering: pixelated;
   opacity: 0.92;
-  transition: transform 0.1s ease;
+ 
 }
 
 .gs-shells {
