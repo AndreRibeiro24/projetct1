@@ -21,6 +21,19 @@ class Game{
         this.height = 600
         this.width = 500
         this.gun = new Gun (6,0)
+        //highestScore
+
+        this.bestScore = parseInt(localStorage.getItem('highRecord')) || 0
+
+        //sound effects
+        this.sounds={
+            reload: new Audio('./media/audio/reloading.mp3'),
+            shoot: new Audio('./media/audio/shotgun_fire_sound.mp3'),
+            blank_shot: new Audio('./media/audio/blank_shot_trimmed_1s.mp3')
+        }
+        this.sounds.reload.volume = 0.4
+        this.sounds.shoot.volume = 0.6
+        this.sounds.blank_shot.volume = 0.4
     }
 
 
@@ -51,6 +64,7 @@ class Game{
         
         this.gun.load();
         this.gun.shuffle();
+        this.playSound('reload');
         this.updateStats();       
         this.currentTurn = 'player'
         this.nextTurn()
@@ -98,14 +112,26 @@ class Game{
 
 
 
-                                                        
-    /*                          Stats Updating Function                         */
+
+    /*                          Stats Updating Function                          */
     updateStats(){
+        this.scoreBoard.textContent = this.score
+        this.updateBestScore()
         this.updateHearts()
         this.updateShells()
         this.updatePortraits()
     }
-     /*                        Enable/disable controls from Player and NPC      */
+    /*                          Highest Record Update                             */
+
+    updateBestScore(){
+        if(this.score > this.bestScore){
+            this.bestScore = this.score
+            localStorage.setItem('bestScore', this.bestScore)
+        }
+        document.getElementById('highRecord').textContent = this.bestScore
+    }
+
+     /*                        Enable/disable controls from Player and NPC       */
      enableControls(enable){
         const selfShootButton = document.querySelector('#shoot-self')
         const shootOppButton = document.querySelector('#shoot-opponent')
@@ -120,7 +146,8 @@ class Game{
      }
 
     /*                      Transitions to endScreen if player looses             */
-    endGameScreen(){
+    endGameScreen(){    
+        this.updateBestScore()
         this.endScreen.style.height = this.height + 'px'
         this.endScreen.style.width = this.width + 'px'
         this.gameScreen.style.display = 'none'
@@ -165,6 +192,7 @@ class Game{
         const playerImg = document.querySelector('#player-portrait')
         const opponentImg = document.querySelector('#opponent-portrait')
         const playerSrc = [
+            './media/images/player_0hp.png',
             './media/images/player_low_hp.jpg',
             './media/images/player_mid_hp.jpg',
             './media/images/player_full_hp.jpg'
@@ -178,7 +206,7 @@ class Game{
             './media/images/skeleton_full_hp.jpg'
             ]
 
-         playerImg.src= playerSrc[this.player.lives - 1]
+         playerImg.src= playerSrc[this.player.lives]
          opponentImg.src = opponentSrc[this.opponent.lives]   
     }
     /*                      Update shotgun when firing a live round           */
@@ -215,6 +243,13 @@ class Game{
         log.textContent = msg
         log.style.color = color
     }
+
+    /*                      game audio play                                      */
+
+    playSound(name){
+        this.sounds[name].currentTime = 0
+        this.sounds[name].play()
+    }
                             /*                                         Game flow                                     */
     
     
@@ -248,6 +283,7 @@ class Game{
         this.gun.liveRounds = Math.floor(Math.random() * (this.gun.chambers - 1)) + 1;
         this.gun.load();
         this.gun.shuffle()
+        this.playSound('reload')
         this.updateStats();
         // this.displayRounds();
 
@@ -269,7 +305,7 @@ class Game{
     checkGameOver(){
         if(this.player.lives <= 0 ){
             this.gameIsOver = true
-            this.endGameScreen();
+            setTimeout(()=>this.endGameScreen(),2500); //had to change this. becuase of gun jamming easter egg!
         }
     }
 
@@ -283,21 +319,27 @@ class Game{
         this.shotgunDirection(targetSelf)
 
         const isLive = this.gun.shoot()
-        if(isLive){
-        this.logMessage('— bang! —', 'var(--red)')
-        } else {
-        this.logMessage('— click. blank —')
-        }
-
+                
         //check if the chamber is empty
         if(isLive === null){
             this.logMessage(`- Empty chamber. Next Round -`)
             this.startNextRound()
             return
         }
+        //action
+        if(isLive){
+        this.logMessage('— bang! —', 'var(--red)')            
+        } else {
+        this.logMessage('— click. blank —')
+            this.playSound('blank_shot')
+        }
+
+
         setTimeout(()=>{
         if(isLive){
-            setTimeout(()=>{this.flashGunBlast()},400)
+            setTimeout(()=>{this.playSound('shoot')
+                this.flashGunBlast()
+            },400)
             //added easter egg
             const explodingChance = 0.05
             if(Math.random() < explodingChance){
@@ -377,6 +419,7 @@ class Game{
         setTimeout(()=>{
         if(isLive){
             this.flashGunBlast()
+            this.playSound('shoot')
             //easter egg for opponent
             const explodingChance = 0.05
             if(Math.random() < explodingChance){
@@ -395,6 +438,9 @@ class Game{
                 this.player.lives--
                 this.logMessage('— bang. you took a hit —', 'var(--red)')
             }
+        }else{
+                this.playSound('blank_shot')
+                this.logMessage("— click. blank —")
         }
         /* stats update and checking if gameover */
         setTimeout(()=>{
@@ -434,7 +480,8 @@ class Game{
 const game = new Game(6,0);
 
 
-                                                /*                                          EVENT LISTENERS                                      */
+                             /*                                          EVENT LISTENERS                                      */
+
     /*                      Start Button                                           */
 document.querySelector("#start-button").addEventListener("click", () => {
     game.start();
