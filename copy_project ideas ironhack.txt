@@ -10,7 +10,7 @@ Press shoot self or opponent
 Survive or lose
 
 Core Features 
-4 or 6 chambers
+6 chambers
 random live bullets
 random blank bullets
 Shoot Self button
@@ -98,7 +98,7 @@ remove chambers your lives and opponent lives, and add a game-log for player to 
 
 
 To do: 
-- fix opponent portraits, for some reason images are messed up with the health status.
+- fix opponent portraits, for some reason images are messed up with the health status.(done)
 - add sounds, reloading(start of each round), click(when blank), bang sound (when live); 
 - build highscore result at the end;
 - highlight player name and opponent (to know whose turn it is) 

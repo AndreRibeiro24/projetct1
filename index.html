@@ -71,6 +71,10 @@
       <button id="shoot-self">Shoot Self</button>
       <button id="shoot-opponent">Shoot Opponent</button>
     </div>
+
+    <div>
+      <button id="mute-button">Sound <span id="sound-status">On</span></button>
+    </div>
   </div>
 
 </div>
@@ -86,15 +90,6 @@
             <button id ='restart-button'>Restart</button>
         </div>
     </main> 
-    <!--game ost-->
-        <audio id="bg-music" src="./media/audio/mainost.mp3" loop></audio>
-        <script>
-                const music = document.getElementById('bg-music');
-                music.volume = 0.08;
-                document.getElementById('start-button').addEventListener('click', () => {
-                    music.play();
-                });
-        </script>
     <!-- JS files linking-->
         <script type="text/javascript" src="src/gun.js"></script>
         <script type="text/javascript" src="src/opponent.js"></script>

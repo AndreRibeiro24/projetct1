@@ -23,10 +23,11 @@ class Game{
         this.gun = new Gun (6,0)
         //highestScore
 
-        this.bestScore = parseInt(localStorage.getItem('highRecord')) || 0
+        this.bestScore = parseInt(localStorage.getItem('bestScore')) || 0
 
         //sound effects
         this.sounds={
+            ost: new Audio('./media/audio/mainost.mp3'),
             reload: new Audio('./media/audio/reloading.mp3'),
             shoot: new Audio('./media/audio/shotgun_fire_sound.mp3'),
             blank_shot: new Audio('./media/audio/blank_shot_trimmed_1s.mp3')
@@ -34,6 +35,9 @@ class Game{
         this.sounds.reload.volume = 0.4
         this.sounds.shoot.volume = 0.6
         this.sounds.blank_shot.volume = 0.4
+        this.sounds.ost.volume = 0.08
+
+        this.isMuted = false
     }
 
 
@@ -247,8 +251,21 @@ class Game{
     /*                      game audio play                                      */
 
     playSound(name){
+        if(this.isMuted){return}
         this.sounds[name].currentTime = 0
         this.sounds[name].play()
+    }
+    
+    toggleMute(){
+        this.isMuted = !this.isMuted
+        const status = document.querySelector('#sound-status')
+        if(this.isMuted){
+            status.textContent = "Off"
+        }else{
+            status.textContent = "On"
+        }
+
+        this.sounds.ost.muted = this.isMuted
     }
                             /*                                         Game flow                                     */
     
@@ -498,3 +515,11 @@ document.querySelector('#shoot-opponent').addEventListener('click', ()=>{
 document.querySelector('#restart-button').addEventListener('click',()=>{
     game.restartGame();
 } )
+    /*                      OST                                            */
+     document.getElementById('start-button').addEventListener('click', () => {
+                   game.playSound('ost');
+                });
+    /*                      Toggle Sound Button                                           */
+document.querySelector('#mute-button').addEventListener('click',()=>{
+    game.toggleMute()
+}) 
